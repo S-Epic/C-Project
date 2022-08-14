@@ -1,0 +1,116 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+/*
+     R代表一个人
+     #代表一堵墙
+//   0123456
+     ####### // 0
+     #   #   // 1
+     #R ## # // 2
+     #   # # // 3
+     ##    # // 4
+     ####### // 5
+
+     分析:
+     >1.保存地图(二维数组)
+     >2.输出地图
+     >3.操作R前进(控制小人行走)
+      3.1.接收用户输入(scanf/getchar)
+      w(向上走) s(向下走) a(向左走) d(向右走)
+      3.2.判断用户的输入,控制小人行走
+         3.2.1.替换二维数组中保存的数据
+             (
+                1.判断是否可以修改(如果不是#就可以修改)
+                2.修改现有位置为空白
+                3.修改下一步为R
+             )
+      3.3.输出修改后的二维数组
+     4.判断用户是否走出出口
+*/
+// 声明打印地图方法
+void printMap(char map[6][7], int row, int col);
+int main(int argc, const char* argv[])
+{
+    // 1.定义二维数组保存迷宫地图
+    char map[6][7] = {
+        {'#', '#', '#', '#', '#', '#', '#'},
+        {'#', ' ', ' ', ' ', '#' ,' ', ' '},
+        {'#', 'R', ' ', '#', '#', ' ', '#'},
+        {'#', ' ', ' ', ' ', '#', ' ', '#'},
+        {'#', '#', ' ', ' ', ' ', ' ', '#'},
+        {'#', '#', '#', '#', '#', '#', '#'}
+    };
+    // 2.计算地图行数和列数
+    int row = sizeof(map) / sizeof(map[0]);
+    int col = sizeof(map[0]) / sizeof(map[0][0]);
+    // 3.输出地图
+    printMap(map, row, col);
+    // 4.定义变量记录人物位置
+    int pRow = 2;
+    int pCol = 1;
+    // 5.定义变量记录出口的位置
+    int endRow = 1;
+    int endCol = 6;
+    // 6.控制人物行走
+    while ('R' != map[endRow][endCol]) {
+        // 6.1提示用户如何控制人物行走
+        printf("亲, 请输入相应的操作\n");
+        printf("w(向上走) s(向下走) a(向左走) d(向右走)\n");
+        char run;
+        run = getchar();
+        // 6.2根据用户输入控制人物行走
+        switch (run) {
+        case 's':
+            if ('#' != map[pRow + 1][pCol]) {
+                map[pRow][pCol] = ' ';
+                pRow++;//3
+                map[pRow][pCol] = 'R';
+            }
+            break;
+        case 'w':
+            if ('#' != map[pRow - 1][pCol]) {
+                map[pRow][pCol] = ' ';
+                pRow--;
+                map[pRow][pCol] = 'R';
+            }
+            break;
+        case 'a':
+            if ('#' != map[pRow][pCol - 1]) {
+                map[pRow][pCol] = ' ';
+                pCol--;
+                map[pRow][pCol] = 'R';
+            }
+            break;
+        case 'd':
+            if ('#' != map[pRow][pCol + 1]) {
+                map[pRow][pCol] = ' ';
+                pCol++;
+                map[pRow][pCol] = 'R';
+            }
+            break;
+        }
+        // 6.3重新输出行走之后的地图
+        printMap(map, row, col);
+    }
+    printf("你太牛X了\n");
+    printf("想挑战自己,请购买完整版本\n");
+    return 0;
+}
+
+/**
+ * @brief printMap
+ * @param map 需要打印的二维数组
+ * @param row 二维数组的行数
+ * @param col 二维数组的列数
+ */
+void printMap(char map[6][7], int row, int col)
+{
+    // 为了保证窗口的干净整洁, 每次打印都先清空上一次的打印
+    system("cls");
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            printf("%c", map[i][j]);
+        }
+        printf("\n");
+    }
+}
