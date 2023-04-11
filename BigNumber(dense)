@@ -1,0 +1,127 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+typedef struct LNode 
+{
+    int data;
+    struct LNode* next;
+};
+
+struct LNode* newNode(int data) 
+{
+    struct LNode* node = (struct LNode*)malloc(sizeof(struct LNode));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void addtolist(struct LNode** head, int data) 
+{
+    struct LNode* current = *head;
+    if (current == NULL) 
+    {
+        *head = newNode(data);
+    }
+    else 
+    {
+        while (current->next != NULL) 
+        {
+            current = current->next;
+        }
+        current->next = newNode(data);
+    }
+}
+
+struct LNode* reverse(struct LNode* head) 
+{
+    struct LNode* prev = NULL;
+    struct LNode* current = head;
+
+    while (current != NULL) 
+    {
+        struct LNode* next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    return prev;
+}
+
+struct LNode* add(struct LNode* num1, struct LNode* num2) 
+{
+    struct LNode* result = NULL;
+    int carry = 0;
+
+    while (num1 != NULL || num2 != NULL)
+    {
+        int sum = (num1 != NULL ? num1->data : 0) + (num2 != NULL ? num2->data : 0) + carry;
+        carry = sum / 10;
+        sum %= 10;
+        addtolist(&result, sum);
+
+        if (num1 != NULL)
+        {
+            num1 = num1->next;
+        }
+        if (num2 != NULL)
+        {
+            num2 = num2->next;
+        }
+    }
+    if (carry > 0) 
+    {
+        addtolist(&result, carry);
+    }
+
+    return result;
+}
+
+int main() 
+{
+    FILE* fp = fopen("C:\\Users\\DELL\\Desktop\\input.txt", "r+");
+
+    struct LNode* num1 = NULL;
+    struct LNode* num2 = NULL;
+
+    char c;
+    while ((c = fgetc(fp)) != EOF && c != '\n') 
+    {
+        if (c >= '0' && c <= '9') 
+        {
+            addtolist(&num1, c - '0');
+        }
+    }
+
+    while ((c = fgetc(fp)) != EOF && c != '\n') 
+    {
+        if (c >= '0' && c <= '9') 
+        {
+            addtolist(&num2, c - '0');
+        }
+    }
+    fclose(fp);
+    
+    struct LNode* sum = reverse(add(reverse(num1), reverse(num2)));
+
+    FILE* FP = fopen("C:\\Users\\DELL\\Desktop\\input.txt", "a");
+
+    struct LNode* current = sum;
+    fprintf(FP, "\n");
+    while (current != NULL) 
+     {
+        fprintf(FP, "%d", current->data);
+        current = current->next;
+    }
+    fprintf(FP, "\n");
+    fclose(FP);
+    
+    free(num1);
+    free(num2);
+    free(sum);
+    return 0;
+}
+
